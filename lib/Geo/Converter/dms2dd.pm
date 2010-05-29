@@ -5,7 +5,7 @@ package Geo::Converter::dms2dd;
 use strict;
 use warnings;
 
-our $VERSION = '1';
+our $VERSION = '0.01';
 
 use Carp;
 
@@ -236,7 +236,7 @@ Geo::Converter::dms2dd
 
 =head1 VERSION
 
-1
+0.01
 
 =head1 SYNOPSIS
 
@@ -316,9 +316,8 @@ Shawn Laffan S<(I<shawnlaffan@gmail.com>)>.
 
 =head1 BUGS AND IRRITATIONS
 
-This is part of the Biodiverse project, so
-submit bug, fixes and enhancement requests via the bug tracker
-at L<http://www.purl.org/biodiverse>.
+Submit bugs, fixes and enhancement requests via the bug tracker
+at L<http://code.google.com/p/geo-converter-dms2dd/>.
 
 =head1 LICENSE
 
