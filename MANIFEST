@@ -1,0 +1,6 @@
+Changes
+Makefile.PL
+MANIFEST
+README
+t/Geo-Converter-dms2dd.t
+lib/Geo/Converter/dms2dd.pm
