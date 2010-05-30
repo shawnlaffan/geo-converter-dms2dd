@@ -31,13 +31,14 @@ Readonly my $RE_HEMI => qr {
                         }xms;
 
 #  a few constants
-Readonly my $MAX_VALID_DD  => 360;
-Readonly my $MAX_VALID_LAT => 90;
-Readonly my $MAX_VALID_LON => 180;
+Readonly my $MAX_VALID_DD  =>  360;
+Readonly my $MIN_VALID_DD  => -180;
+Readonly my $MAX_VALID_LAT =>   90;
+Readonly my $MAX_VALID_LON =>  180;
 
 Readonly my $INVALID_CHAR_CONTEXT => 3;
 
-#  how many numbers we can have in a DMS string
+#  how many distinct numbers we can have in a DMS string?
 Readonly my $MAX_DMS_NUM_COUNT => 3;
 
 #  convert degrees minutes seconds values into decimal degrees
@@ -190,7 +191,7 @@ sub _dms2dd_validate_dd_value {
             $msg = "Longitude out of bounds: $dd\n"
         }
     }
-    elsif ($dd < -180 || $dd > $MAX_VALID_DD) {
+    elsif ($dd < $MIN_VALID_DD || $dd > $MAX_VALID_DD) {
         croak "Coord out of bounds\n";
     }
     croak "$msg_pfx $msg" if $msg;
@@ -319,6 +320,11 @@ Shawn Laffan S<(I<shawnlaffan@gmail.com>)>.
 =head1 BUGS AND IRRITATIONS
 
 It does not deal with non-English spellings of north, south, east or west.
+Hemispheres need to satisfy qr/[NESWnesw+-]/.  A solution could be to drop
+in an appropriate regexp as an argument.  Patches welcome.
+
+It could probably also give the parsed degrees, minutes and seconds rather
+than convert them.  They are pretty easy to calculate, though.
 
 Submit bugs, fixes and enhancement requests via the bug tracker
 at L<http://code.google.com/p/geo-converter-dms2dd/>.
