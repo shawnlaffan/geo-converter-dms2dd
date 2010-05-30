@@ -20,87 +20,87 @@ use Geo::Converter::dms2dd qw {dms2dd};
 # Insert your test code below, the Test::More module is use()ed here so read
 # its man page ( perldoc Test::More ) for help writing this test script.
 
-my $dd_coord;
+my $dd_value;
  
-my @coords = (
-    {   coord    => q{S23},
+my @values = (
+    {   value    => q{S23},
         expected => -23,
         args     => {},
     },
-    {   coord    => q{S23°30},
+    {   value    => q{S23°30},
         expected => -23.5,
         args     => {},
     },
-    {   coord    => q{S23°0},
+    {   value    => q{S23°0},
         expected => -23,
         args     => {},
     },
-    {   coord    => q{S23°60},
+    {   value    => q{S23°60},
         expected => -24,
         args     => {},
     },
-    {   coord    => q{S23°30'30},
+    {   value    => q{S23°30'30},
         expected => -23.508333333333333,
         args     => {},
     },
     
-    {   coord    => q{S23°32'09.567"},
+    {   value    => q{S23°32'09.567"},
         expected => -23.5359908333333,
         args     => {},
     },
-    {   coord    => q{S23°32'09.567"},
+    {   value    => q{S23°32'09.567"},
         expected => -23.5359908333333,
         args     => {is_lat => 1},
     },
-    {   coord    => q{23°32'09.567"},
+    {   value    => q{23°32'09.567"},
         expected => 23.5359908333333,
         args     => {},
     },
-    {   coord    => q{n23°32'09.567"},
+    {   value    => q{n23°32'09.567"},
         expected => 23.5359908333333,
         args     => {is_lat => 1},
     },
-    {   coord    => q{149°23'18.009"E},
+    {   value    => q{149°23'18.009"E},
         expected => 149.388335833333,
         args     => {},
     },
-    {   coord    => q{149°23'18.009"E},
+    {   value    => q{149°23'18.009"E},
         expected => 149.388335833333,
         args     => {is_lon => 1},
     },
-    {   coord    => q{149°23'18.009"W},
+    {   value    => q{149°23'18.009"W},
         expected => -149.388335833333,
         args     => {is_lon => 1},
     },
 
-    {   coord    => q{east 149°23'18.009},
+    {   value    => q{east 149°23'18.009},
         expected => 149.388335833333,
         args     => {},
     },
-    {   coord    => q{east 149°23'18.009},
+    {   value    => q{east 149°23'18.009},
         expected => 149.388335833333,
         args     => {is_lon => 1},
     },
-    {   coord    => q{east 149°23'18.009},
+    {   value    => q{east 149°23'18.009},
         expected => 149.388335833333,
         args     => {irrelevant_arg => 1},
     },
-    {   coord    => q{149°23'18.009"blurgle},
+    {   value    => q{149°23'18.009"blurgle},
         expected => 149.388335833333,
         args     => {},
     },
     
 );
 
-foreach my $condition (@coords) {
+foreach my $condition (@values) {
     my %cond = %$condition;
-    my ($value, $expected, $args) = @cond{qw /coord expected args/};
-    $dd_coord  = dms2dd ({coord => $value, %$args});
-    my $feedback = "coord => $value, " . join q{, }, %$args;
-    is ($dd_coord, $expected, $feedback);
+    my ($value, $expected, $args) = @cond{qw /value expected args/};
+    $dd_value  = dms2dd ({value => $value, %$args});
+    my $feedback = "value => $value, " . join q{, }, %$args;
+    is ($dd_value, $expected, $feedback);
 }
 
-#  no coord arg passed
+#  no value arg passed
 my $result = eval {
     dms2dd ();
 };
@@ -114,27 +114,27 @@ ok (defined $error, "Trapped error: $text");
 
 #  The following all croak with warnings,
 my @croakers = (
-    { coord => q{S23°32'09.567"},   args => {is_lon => 1}  },
-    { coord => q{149°23'18.009"E},  args => {is_lat => 1}  },
-    { coord => q{149°23'18.009"25}, args => {}             },
-    { coord => q{}                , args => {}             },
-    { coord => q{"blurgle "}      , args => {}             },
-    { coord => q{149.25°23'18"}   , args => {}             },
-    { coord => q{149°23.25'18"}   , args => {}             },
-    {   coord    => q{W149°23'18.009"E},
+    { value => q{S23°32'09.567"},   args => {is_lon => 1}  },
+    { value => q{149°23'18.009"E},  args => {is_lat => 1}  },
+    { value => q{149°23'18.009"25}, args => {}             },
+    { value => q{}                , args => {}             },
+    { value => q{"blurgle "}      , args => {}             },
+    { value => q{149.25°23'18"}   , args => {}             },
+    { value => q{149°23.25'18"}   , args => {}             },
+    {   value    => q{W149°23'18.009"E},
         args     => {},
     },
-    {   coord    => q{W149°23'18.009"W},
+    {   value    => q{W149°23'18.009"W},
         args     => {},
     },
 
 );
 
 foreach my $condition (@croakers) {
-    my $value = $condition->{coord};
+    my $value = $condition->{value};
     my $args  = $condition->{args}; 
-    my $function_args = {coord => $value, %$args};
-    $dd_coord = eval {
+    my $function_args = {value => $value, %$args};
+    $dd_value = eval {
         dms2dd ($function_args)
     };
     my $error = $EVAL_ERROR;
