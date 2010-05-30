@@ -4,3 +4,5 @@ Revision history for Perl extension Geo::Converter::dms2dd.
 	- original version; created by h2xs 1.23 with options
 		-X Geo::Converter::dms2dd
 
+	- module contents shifted across from biodiverse project.
+	- tests added
