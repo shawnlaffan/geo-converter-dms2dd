@@ -1,4 +1,4 @@
-#  package to convert degrees minutes seconds coords to decimal degrees
+#  package to convert degrees minutes seconds values to decimal degrees
 #  also does some simple validation of decimal degree values as a side effect
 package Geo::Converter::dms2dd;
 
@@ -18,7 +18,7 @@ use base qw(Exporter);
 our @EXPORT_OK = qw( dms2dd );
 
 #############################################################
-##  some stuff to handle coords in degrees 
+##  some stuff to handle values in degrees 
 
 #  some regexes
 Readonly my $RE_REAL => qr /$RE{num}{real}/xms;
@@ -40,29 +40,29 @@ Readonly my $INVALID_CHAR_CONTEXT => 3;
 #  how many numbers we can have in a DMS string
 Readonly my $MAX_DMS_NUM_COUNT => 3;
 
-#  convert degrees minutes seconds coords into decimal degrees
+#  convert degrees minutes seconds values into decimal degrees
 #  e.g.;
 #  S23°32'09.567"  = -23.5359908333333
 #  149°23'18.009"E = 149.388335833333
 sub dms2dd {
     my $args = shift;
 
-    my $coord = $args->{coord};
-    croak "Argument 'coord' not supplied\n"
-      if !defined $coord;
+    my $value = $args->{value};
+    croak "Argument 'value' not supplied\n"
+      if !defined $value;
 
-    my $msg_pfx = 'Coord error: ';
+    my $msg_pfx = 'Value error: ';
 
     my $first_char_invalid;
-    if (not $coord =~ m/ \A [\s0-9NEWSnews+-] /xms) {
-        $first_char_invalid = substr $coord, 0, $INVALID_CHAR_CONTEXT;
+    if (not $value =~ m/ \A [\s0-9NEWSnews+-] /xms) {
+        $first_char_invalid = substr $value, 0, $INVALID_CHAR_CONTEXT;
     }
 
-    croak $msg_pfx . "Invalid string at start of coord: $coord\n"
+    croak $msg_pfx . "Invalid string at start of value: $value\n"
       if defined $first_char_invalid;
 
     my @nums = eval {
-        _dms2dd_extract_nums ( { coord => $coord } );
+        _dms2dd_extract_nums ( { value => $value } );
     };
     croak $EVAL_ERROR if ($EVAL_ERROR);
 
@@ -72,7 +72,7 @@ sub dms2dd {
 
     my $hemi = eval {
         _dms2dd_extract_hemisphere (
-            { coord => $coord },
+            { value => $value },
         );
     };
     croak $EVAL_ERROR if $EVAL_ERROR;
@@ -95,15 +95,15 @@ sub dms2dd {
               );
 
     my $valid = eval {
-        _dms2dd_validate_dd_coord ( {
+        _dms2dd_validate_dd_value ( {
             %{$args},
-            coord       => $dd,
+            value       => $dd,
             hemisphere  => $hemi,
         } );
     };
     croak $EVAL_ERROR if $EVAL_ERROR;
 
-    #my $res = join (q{ }, $coord, $dd, $multiplier, $hemi, @nums) . "\n";
+    #my $res = join (q{ }, $value, $dd, $multiplier, $hemi, @nums) . "\n";
 
     return $dd;
 }
@@ -113,9 +113,9 @@ sub dms2dd {
 sub _dms2dd_extract_nums {
     my $args = shift;
 
-    my $coord = $args->{coord};
+    my $value = $args->{value};
 
-    my @nums = $coord =~ m/$RE_REAL/gxms;
+    my @nums = $value =~ m/$RE_REAL/gxms;
     my $deg = $nums[0];
     my $min = $nums[1];
     my $sec = $nums[2];
@@ -151,8 +151,8 @@ sub _dms2dd_extract_nums {
     #  the valid degrees values depend on the hemisphere,
     #  so are trapped elsewhere
 
-    my $msg_pfx     = 'DMS coord error: ';
-    my $msg_suffix  = qq{: '$coord'\n};
+    my $msg_pfx     = 'DMS value error: ';
+    my $msg_suffix  = qq{: '$value'\n};
 
     croak $msg_pfx . $msg . $msg_suffix
         if $msg;
@@ -160,13 +160,13 @@ sub _dms2dd_extract_nums {
     return wantarray ? @nums : \@nums;
 }
 
-sub _dms2dd_validate_dd_coord {
+sub _dms2dd_validate_dd_value {
     my $args = shift;
 
     my $is_lat = $args->{is_lat};
     my $is_lon = $args->{is_lon};
 
-    my $dd   = $args->{coord};
+    my $dd   = $args->{value};
     my $hemi = $args->{hemisphere};
 
     my $msg_pfx = 'Coord error: ';
@@ -201,18 +201,18 @@ sub _dms2dd_validate_dd_coord {
 sub _dms2dd_extract_hemisphere {
     my $args = shift;
 
-    my $coord = $args->{coord};
+    my $value = $args->{value};
 
     my $hemi;
     #  can start with [NESWnesw-]
-    if ($coord =~ m/ \A ( $RE_HEMI | [-] )/xms) {
+    if ($value =~ m/ \A ( $RE_HEMI | [-] )/xms) {
         $hemi = $1;
     }
     #  cannot end with [-]
-    if ($coord =~ m/ ( $RE_HEMI ) \z /xms) {
+    if ($value =~ m/ ( $RE_HEMI ) \z /xms) {
         my $hemi_end = $1;
 
-        croak "Cannot define hemisphere twice: $coord\n"
+        croak "Cannot define hemisphere twice: $value\n"
           if (defined $hemi && defined $hemi_end);
 
         $hemi = $hemi_end;
@@ -242,38 +242,38 @@ Geo::Converter::dms2dd
 
  use Geo::Converter::dms2dd qw { dms2dd };
 
- my $dms_coord;
- my $dd_coord;
+ my $dms_value;
+ my $dd_value;
  
- $dms_coord = q{S23°32'09.567"};
- $dd_coord  = dms2dd ({coord => $dms_coord});
- print $dms_coord
+ $dms_value = q{S23°32'09.567"};
+ $dd_value  = dms2dd ({value => $dms_value});
+ print $dms_value
  #  -23.5359908333333
 
- $dms_coord = q{149°23'18.009"E};
- $dd_coord  = dms2dd ({coord => $dms_coord});
- print $dd_coord
+ $dms_value = q{149°23'18.009"E};
+ $dd_value  = dms2dd ({value => $dms_value});
+ print $dd_value
  #   149.388335833333
  
- $dms_coord = q{east 149°23'18.009};
- $dd_coord  = dms2dd ({coord => $dms_coord});
- print $dd_coord
+ $dms_value = q{east 149°23'18.009};
+ $dd_value  = dms2dd ({value => $dms_value});
+ print $dd_value
  #   149.388335833333
  
  
  #  The following all croak with warnings:
  
- $dms_coord = q{S23°32'09.567"};
- $dd_coord  = dms2dd ({coord => $dms_coord, is_lon => 1});
+ $dms_value = q{S23°32'09.567"};
+ $dd_value  = dms2dd ({value => $dms_value, is_lon => 1});
  # Coord error:  Longitude specified, but latitude found
 
- $dms_coord = q{149°23'18.009"E};
- $dd_coord  = dms2dd ({coord => $dms_coord, is_lat => 1});
+ $dms_value = q{149°23'18.009"E};
+ $dd_value  = dms2dd ({value => $dms_value, is_lat => 1});
  # Coord error:  Latitude out of bounds: 149.388335833333
  
- $dms_coord = q{149°23'18.009"25};  #  extra number
- $dd_coord  = dms2dd ({coord => $dms_coord});
- # DMS coord error: Too many numbers in string: '149°23'18.009"25'
+ $dms_value = q{149°23'18.009"25};  #  extra number
+ $dd_value  = dms2dd ({value => $dms_value});
+ # DMS value error: Too many numbers in string: '149°23'18.009"25'
 
 
 =head1 DESCRIPTION
@@ -306,6 +306,8 @@ and longitudes with a hemisphere specified must be within [-180, 180]).
 Otherwise values between [-180, 360] are accepted.  If seconds are specified
 and minutes have values after the radix (decimal point) then it croaks
 (e.g. 35 26.5' 22").  Likewise, it croaks for cases like (35.2d 26').
+It will also croak if you specify the hemisphere at teh start and end of the
+value, even if it is the same hemisphere.
 
 Note that this module only works on a single value. 
 Call it once each for latitude and longitude values to convert a full coordinate.
@@ -315,6 +317,8 @@ Call it once each for latitude and longitude values to convert a full coordinate
 Shawn Laffan S<(I<shawnlaffan@gmail.com>)>.
 
 =head1 BUGS AND IRRITATIONS
+
+It does not deal with non-English spellings of north, south, east or west.
 
 Submit bugs, fixes and enhancement requests via the bug tracker
 at L<http://code.google.com/p/geo-converter-dms2dd/>.
