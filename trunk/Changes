@@ -1,8 +1,12 @@
 Revision history for Perl extension Geo::Converter::dms2dd.
 
+0.02  19Jun2010
+        - Change tests to use is_between()
+        - Modify the POD, add details about hemisphere determination
+
 0.01  Sat May 29 22:18:52 2010
 	- original version; created by h2xs 1.23 with options
 		-X Geo::Converter::dms2dd
 
-	- module contents shifted across from biodiverse project.
+	- module contents shifted across from biodiverse project
 	- tests added
