@@ -11,6 +11,20 @@ use English qw { -no_match_vars };
 
 use Test::More;
 
+#  from Statistics::Descriptive
+sub is_between
+{
+    local $Test::Builder::Level = $Test::Builder::Level + 1;
+    
+    my ($have, $want_bottom, $want_top, $blurb) = @_;
+
+    ok (
+        (($have >= $want_bottom) &&
+        ($want_top >= $have)),
+        $blurb
+    );
+}
+
 BEGIN { use_ok('Geo::Converter::dms2dd') };
 
 use Geo::Converter::dms2dd qw {dms2dd};
@@ -92,7 +106,7 @@ my @values = (
     
 );
 
-my $float_tolerance = 1E-13;
+my $float_tolerance = 1E-12;
 
 foreach my $condition (@values) {
     my %cond = %$condition;
@@ -105,7 +119,7 @@ foreach my $condition (@values) {
     my $exp_upper = $expected + $float_tolerance;
     my $exp_lower = $expected - $float_tolerance;
 
-    is_between ($dd_value, $exp_upper, $exp_lower, $feedback);
+    is_between ($dd_value, $exp_lower, $exp_upper, $feedback);
 }
 
 #  no value arg passed
