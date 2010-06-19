@@ -5,7 +5,7 @@ package Geo::Converter::dms2dd;
 use strict;
 use warnings;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 use Carp;
 
@@ -237,7 +237,7 @@ Geo::Converter::dms2dd
 
 =head1 VERSION
 
-0.01
+0.02
 
 =head1 SYNOPSIS
 
@@ -300,14 +300,15 @@ calculations, but the first three must first be converted to decimal degrees.
 The conversion process used in dms2dd is pretty generous in what it treats as DMS,
 as there is a multitude of variations in punctuation and the like.
 Up to three numeric values are extracted and any additional text is largely
-ignored unless it specifies the hemisphere.  It croaks if there are four or more values.
+ignored unless it could be interpreted as the hemisphere (see below).
+It croaks if there are four or more numeric values.
 If the hemisphere is known or the C<is_lat> or C<is_lon> arguments are specified then
 values are validated (e.g. latitudes must be in the interval [-90, 90], 
 and longitudes with a hemisphere specified must be within [-180, 180]).  
 Otherwise values between [-180, 360] are accepted.  If seconds are specified
 and minutes have values after the radix (decimal point) then it croaks
 (e.g. 35 26.5' 22").  Likewise, it croaks for cases like (35.2d 26').
-It will also croak if you specify the hemisphere at teh start and end of the
+It will also croak if you specify the hemisphere at the start and end of the
 value, even if it is the same hemisphere.
 
 Note that this module only works on a single value. 
@@ -319,9 +320,14 @@ Shawn Laffan S<(I<shawnlaffan@gmail.com>)>.
 
 =head1 BUGS AND IRRITATIONS
 
-It does not deal with non-English spellings of north, south, east or west.
+Hemispheres are very liberally interpreted.  So long as the text component
+starts with a valid character then it is used.  This means that
+(E 35 26') is treated the same as (Egregious 35 26').
+
+It also does not deal with non-English spellings of north, south, east or west.
 Hemispheres need to satisfy qr/[NESWnesw+-]/.  A solution could be to drop
-in an appropriate regexp as an argument.  Patches welcome.
+in an appropriate regexp as an argument, or maybe there is an i18n
+solution.  Patches welcome.
 
 It could probably also give the parsed degrees, minutes and seconds rather
 than convert them.  They are pretty easy to calculate, though.

@@ -92,12 +92,20 @@ my @values = (
     
 );
 
+my $float_tolerance = 1E-13;
+
 foreach my $condition (@values) {
     my %cond = %$condition;
+
     my ($value, $expected, $args) = @cond{qw /value expected args/};
     $dd_value  = dms2dd ({value => $value, %$args});
+
     my $feedback = "value => $value, " . join q{, }, %$args;
-    is ($dd_value, $expected, $feedback);
+
+    my $exp_upper = $expected + $float_tolerance;
+    my $exp_lower = $expected - $float_tolerance;
+
+    is_between ($dd_value, $exp_upper, $exp_lower, $feedback);
 }
 
 #  no value arg passed
