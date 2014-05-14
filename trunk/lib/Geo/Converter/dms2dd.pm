@@ -4,8 +4,9 @@ package Geo::Converter::dms2dd;
 
 use strict;
 use warnings;
+use 5.010;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Carp;
 
@@ -41,6 +42,8 @@ Readonly my $INVALID_CHAR_CONTEXT => 3;
 #  how many distinct numbers we can have in a DMS string?
 Readonly my $MAX_DMS_NUM_COUNT => 3;
 
+my $err_msg_pfx = 'DMS2DD Value error: ';
+
 #  convert degrees minutes seconds values into decimal degrees
 #  e.g.;
 #  S23°32'09.567"  = -23.5359908333333
@@ -52,24 +55,18 @@ sub dms2dd {
     croak "Argument 'value' not supplied\n"
       if !defined $value;
 
-    my $msg_pfx = 'Value error: ';
-
     my $first_char_invalid;
     if (not $value =~ m/ \A [\s0-9NEWSnews+-] /xms) {
         $first_char_invalid = substr $value, 0, $INVALID_CHAR_CONTEXT;
     }
 
-    croak $msg_pfx . "Invalid string at start of value: $value\n"
+    croak $err_msg_pfx . "Invalid string at start of value: $value\n"
       if defined $first_char_invalid;
 
     my @nums = eval {
         _dms2dd_extract_nums ( { value => $value } );
     };
     croak $EVAL_ERROR if ($EVAL_ERROR);
-
-    my $deg = $nums[0];
-    my $min = $nums[1];
-    my $sec = $nums[2];
 
     my $hemi = eval {
         _dms2dd_extract_hemisphere (
@@ -85,10 +82,10 @@ sub dms2dd {
 
     #  now apply the defaults
     #  $deg is +ve, as hemispheres are handled separately
-    $deg = abs ($deg) || 0;
-    $min = $min || 0;
-    $sec = $sec || 0;
-
+    my $deg = abs ($nums[0] || 0);
+    my $min = $nums[1] || 0;
+    my $sec = $nums[2] || 0;
+    
     my $dd = $multiplier
             * (   $deg
                 + $min / 60
@@ -97,7 +94,7 @@ sub dms2dd {
 
     my $valid = eval {
         _dms2dd_validate_dd_value ( {
-            %{$args},
+            %$args,
             value       => $dd,
             hemisphere  => $hemi,
         } );
@@ -152,10 +149,10 @@ sub _dms2dd_extract_nums {
     #  the valid degrees values depend on the hemisphere,
     #  so are trapped elsewhere
 
-    my $msg_pfx     = 'DMS value error: ';
+    #my $msg_pfx     = 'DMS value error: ';
     my $msg_suffix  = qq{: '$value'\n};
 
-    croak $msg_pfx . $msg . $msg_suffix
+    croak $err_msg_pfx . $msg . $msg_suffix
         if $msg;
 
     return wantarray ? @nums : \@nums;
@@ -170,20 +167,20 @@ sub _dms2dd_validate_dd_value {
     my $dd   = $args->{value};
     my $hemi = $args->{hemisphere};
 
-    my $msg_pfx = 'Coord error: ';
+    my $msg_pfx = 'DMS2DD Coord error: ';
     my $msg;
 
     #  if we know the hemisphere then check it is in bounds,
     #  otherwise it must be in the interval [-180,360]
-    if ($is_lat || $hemi =~ / [SsNn] /xms) {
+    if ($is_lat // ($hemi =~ / [SsNn] /xms)) {
         if ($is_lon) {
-            $msg = "Longitude specified, but latitude found\n"
+            $msg = "Longitude specified, but latitude found:  $dd\n"
         }
         elsif (abs ($dd) > $MAX_VALID_LAT) {
             $msg = "Latitude out of bounds: $dd\n"
         }
     }
-    elsif ($is_lon || $hemi =~ / [EeWw] /xms) {
+    elsif ($is_lon // ($hemi =~ / [EeWw] /xms)) {
         if ($is_lat) {
             $msg = "Latitude specified, but longitude found\n"
         }
@@ -192,7 +189,7 @@ sub _dms2dd_validate_dd_value {
         }
     }
     elsif ($dd < $MIN_VALID_DD || $dd > $MAX_VALID_DD) {
-        croak "Coord out of bounds\n";
+        $msg = "Coord out of bounds:  $dd\n";
     }
     croak "$msg_pfx $msg" if $msg;
 
