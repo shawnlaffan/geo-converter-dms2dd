@@ -1,4 +1,7 @@
-use 5.008009;
+use 5.010;
+use strict;
+use warnings;
+
 use ExtUtils::MakeMaker;
 
 my $abstract = 'Parse and convert values in Degrees/Minutes/Seconds '
@@ -10,10 +13,10 @@ WriteMakefile (
     NAME              => 'Geo::Converter::dms2dd',
     VERSION_FROM      => 'lib/Geo/Converter/dms2dd.pm', # finds $VERSION
     PREREQ_PM         => {
-        Carp            => 0,
-        Readonly        => 0,
-        Regexp::Common  => 0,
-        English         => 0,
+        Carp             => 0,
+        Readonly         => 0,
+        'Regexp::Common' => 0,
+        English          => 0,
     },
     ($] >= 5.005
         ? (
