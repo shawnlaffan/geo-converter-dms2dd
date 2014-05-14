@@ -46,8 +46,8 @@ my $err_msg_pfx = 'DMS2DD Value error: ';
 
 #  convert degrees minutes seconds values into decimal degrees
 #  e.g.;
-#  S23°32'09.567"  = -23.5359908333333
-#  149°23'18.009"E = 149.388335833333
+#  S23Â°32'09.567"  = -23.5359908333333
+#  149Â°23'18.009"E = 149.388335833333
 sub dms2dd {
     my $args = shift;
 
@@ -228,6 +228,8 @@ sub _dms2dd_extract_hemisphere {
 
 =pod
 
+=encoding ISO8859-1
+
 =head1 NAME
 
 Geo::Converter::dms2dd
@@ -243,17 +245,17 @@ Geo::Converter::dms2dd
  my $dms_value;
  my $dd_value;
  
- $dms_value = q{S23°32'09.567"};
+ $dms_value = q{S23Â°32'09.567"};
  $dd_value  = dms2dd ({value => $dms_value});
  print $dms_value
  #  -23.5359908333333
 
- $dms_value = q{149°23'18.009"E};
+ $dms_value = q{149Â°23'18.009"E};
  $dd_value  = dms2dd ({value => $dms_value});
  print $dd_value
  #   149.388335833333
  
- $dms_value = q{east 149°23'18.009};
+ $dms_value = q{east 149Â°23'18.009};
  $dd_value  = dms2dd ({value => $dms_value});
  print $dd_value
  #   149.388335833333
@@ -261,17 +263,17 @@ Geo::Converter::dms2dd
  
  #  The following all croak with warnings:
  
- $dms_value = q{S23°32'09.567"};
+ $dms_value = q{S23Â°32'09.567"};
  $dd_value  = dms2dd ({value => $dms_value, is_lon => 1});
  # Coord error:  Longitude specified, but latitude found
 
- $dms_value = q{149°23'18.009"E};
+ $dms_value = q{149Â°23'18.009"E};
  $dd_value  = dms2dd ({value => $dms_value, is_lat => 1});
  # Coord error:  Latitude out of bounds: 149.388335833333
  
- $dms_value = q{149°23'18.009"25};  #  extra number
+ $dms_value = q{149Â°23'18.009"25};  #  extra number
  $dd_value  = dms2dd ({value => $dms_value});
- # DMS value error: Too many numbers in string: '149°23'18.009"25'
+ # DMS value error: Too many numbers in string: '149Â°23'18.009"25'
 
 
 =head1 DESCRIPTION
@@ -285,8 +287,8 @@ degrees/minutes/seconds (DMS) format, for example from Google Earth, GIS package
 similar.  For example, one might be given a location coordinate for just north east
 of Dingo in Queensland, Australia.  Four possible formats are:
 
- S23°32'09.567", E149°23'18.009"
- 23°32'09.567"S, 149°23'18.009"E
+ S23Â°32'09.567", E149Â°23'18.009"
+ 23Â°32'09.567"S, 149Â°23'18.009"E
  -23 32 9.567,   +149 23 18.009
  -23.535991,     149.388336
 
