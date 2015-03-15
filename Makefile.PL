@@ -24,4 +24,15 @@ WriteMakefile (
             AUTHOR   => 'Shawn Laffan <shawnlaffan@gmail.com>')
         : ()
     ),
+    META_MERGE => {
+        'meta-spec' => { version => 2 },
+        resources => {
+            repository => {
+                type => 'git',
+                url  => 'https://github.com/shawnlaffan/geo-converter-dms2dd.git',
+                web  => 'https://github.com/shawnlaffan/geo-converter-dms2dd',
+                bugtracker  => 'https://github.com/shawnlaffan/geo-converter-dms2dd/issues',
+            },
+        },
+    },
 );
