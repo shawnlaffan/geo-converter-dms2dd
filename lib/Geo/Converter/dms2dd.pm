@@ -26,8 +26,11 @@ Readonly my $RE_REAL => qr /$RE{num}{real}/xms;
 Readonly my $RE_INT  => qr /$RE{num}{int} /xms;
 Readonly my $RE_HEMI => qr {
                             #  the hemisphere if given as text
+                            #  handle full words, ignoring numbers and punctuation
+                            #  needs utf solution
                             \s*
                             [NESWnesw]
+                            [a-zA-Z]*
                             \s*
                         }xms;
 
@@ -76,7 +79,7 @@ sub dms2dd {
     croak $EVAL_ERROR if $EVAL_ERROR;
 
     my $multiplier = 1;
-    if ($hemi =~ / [SsWw-] /xms) {
+    if ($hemi =~ / ^\s* [SsWw-] /xms) {
         $multiplier = -1;
     }
 
@@ -172,7 +175,7 @@ sub _dms2dd_validate_dd_value {
 
     #  if we know the hemisphere then check it is in bounds,
     #  otherwise it must be in the interval [-180,360]
-    if ($is_lat // ($hemi =~ / [SsNn] /xms)) {
+    if ($is_lat // ($hemi =~ / ^[SsNn] /xms)) {
         if ($is_lon) {
             $msg = "Longitude specified, but latitude found:  $dd\n"
         }

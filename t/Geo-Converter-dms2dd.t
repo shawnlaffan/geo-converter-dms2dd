@@ -39,12 +39,17 @@ my $dd_value;
 my @values = (
     {
         value    => q{14° 47' 16" South},
-        expected => 14.787778,
+        expected => -14.787777777777,
+        args     => {},
+    },
+    {
+        value    => q{14° 47' 16" North},
+        expected => 14.787777777777,
         args     => {},
     },
     {
         value    => q{14 47' 16" South},
-        expected => 14.787778,
+        expected => -14.787777777777,
         args     => {},
     },
     {   value    => q{S23},
@@ -96,7 +101,6 @@ my @values = (
         expected => -149.388335833333,
         args     => {is_lon => 1},
     },
-
     {   value    => q{east 149°23'18.009},
         expected => 149.388335833333,
         args     => {},
@@ -124,7 +128,8 @@ foreach my $condition (@values) {
     my ($value, $expected, $args) = @cond{qw /value expected args/};
     $dd_value  = dms2dd ({value => $value, %$args});
 
-    my $feedback = "expected $expected and got $value from: value => $value, " . join q{, }, %$args;
+    my $feedback = "expected $expected and got $dd_value from: value => $value, "
+                 . join q{, }, %$args;
 
     my $exp_upper = $expected + $float_tolerance;
     my $exp_lower = $expected - $float_tolerance;
