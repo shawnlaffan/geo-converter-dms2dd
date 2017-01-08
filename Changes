@@ -1,5 +1,9 @@
 Revision history for Perl extension Geo::Converter::dms2dd.
 
+0.05 2017-01-09
+    - Fix hemisphere handling when full word is given
+    - Correct some incorrect test expectations
+
 0.04 2015-03-16
     - Move repo to github since Google Code is closing down.
     - Add github details to Makefile.PL
