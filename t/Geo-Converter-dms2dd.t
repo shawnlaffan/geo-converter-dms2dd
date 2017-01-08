@@ -37,6 +37,16 @@ use Geo::Converter::dms2dd qw {dms2dd};
 my $dd_value;
  
 my @values = (
+    {
+        value    => q{14° 47' 16" South},
+        expected => 14.787778,
+        args     => {},
+    },
+    {
+        value    => q{14 47' 16" South},
+        expected => 14.787778,
+        args     => {},
+    },
     {   value    => q{S23},
         expected => -23,
         args     => {},
@@ -114,7 +124,7 @@ foreach my $condition (@values) {
     my ($value, $expected, $args) = @cond{qw /value expected args/};
     $dd_value  = dms2dd ({value => $value, %$args});
 
-    my $feedback = "value => $value, " . join q{, }, %$args;
+    my $feedback = "expected $expected and got $value from: value => $value, " . join q{, }, %$args;
 
     my $exp_upper = $expected + $float_tolerance;
     my $exp_lower = $expected - $float_tolerance;
@@ -149,6 +159,10 @@ my @croakers = (
     {   value    => q{W149°23'18.009"W},
         args     => {},
     },
+    {
+        value => q{123456E},
+        args  => {is_lon => 1},
+    }
 
 );
 
