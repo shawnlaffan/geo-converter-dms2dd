@@ -12,8 +12,7 @@ use English qw { -no_match_vars };
 use Test::More;
 
 #  from Statistics::Descriptive
-sub is_between
-{
+sub is_between {
     local $Test::Builder::Level = $Test::Builder::Level + 1;
     
     my ($have, $want_bottom, $want_top, $blurb) = @_;
