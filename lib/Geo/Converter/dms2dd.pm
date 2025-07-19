@@ -11,7 +11,7 @@ our $VERSION = '0.05';
 use Carp;
 
 use Readonly;
-use Regexp::Common;
+use Regexp::Common qw/number/;
 use English qw { -no_match_vars };
 
 require Exporter;
