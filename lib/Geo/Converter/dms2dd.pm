@@ -334,8 +334,6 @@ solution.  Patches welcome.
 It could probably also give the parsed degrees, minutes and seconds rather
 than convert them.  They are pretty easy to calculate, though.
 
-Submit bugs, fixes and enhancement requests via the bug tracker
-at L<http://code.google.com/p/geo-converter-dms2dd/>.
 
 =head1 LICENSE
 
